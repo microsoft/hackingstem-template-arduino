@@ -40,20 +40,18 @@ int sensorPin = A0;
 // Excel variables ------------------------------------------------------------
 float incomingExcelFloat = 0;
 int incomingExcelInteger = 0;
-String incomingExcelString = "";
+//String incomingExcelString = "";
 
 // Serial data variables ------------------------------------------------------
 const byte kNumberOfChannelsFromExcel = 6; //Incoming Serial Data Array
 // IMPORTANT: This must be equal to number of channels set in Data Streamer
-String incomingSerialData[kNumberOfChannelsFromExcel];
+//String incomingSerialData[kNumberOfChannelsFromExcel];
 
 const String kDelimiter = ",";    // Data Streamer expects a comma delimeter
-//char inputString[64];          // String variable to hold incoming data
+// char inputString[64];          // String variable to hold incoming data
 boolean stringComplete = false;   // Indicates complete string (newline found)
 const int kSerialInterval = 50;   // Interval between serial writes
 unsigned long serialPreviousTime; // Timestamp to track serial interval
-
-//char arr[kNumberOfChannelsFromExcel][10];
 
 char* arr[kNumberOfChannelsFromExcel];
 // SETUP ----------------------------------------------------------------------
@@ -67,7 +65,7 @@ void loop()
 {
   // Process sensors
   processSensors();
-  delay(1000);
+  //delay(1000);
 
   // Read Excel variables from serial port (Data Streamer)
   processIncomingSerial();
@@ -90,24 +88,24 @@ void processSensors()
 
 // Add any specialized methods and processing code here
 
-// INCOMING SERIAL DATA PROCESSING CODE----------------------------------------
-// Process serial data inputString from Data Streamer
-void ParseSerialData()
-{
-  if (stringComplete) {     
-    //Build an array of values from comma delimited string from Data Streamer
-    //BuildDataArray(inputString);
+// // INCOMING SERIAL DATA PROCESSING CODE----------------------------------------
+// // Process serial data inputString from Data Streamer
+// void ParseSerialData()
+// {
+//   if (stringComplete) {     
+//     //Build an array of values from comma delimited string from Data Streamer
+//     //BuildDataArray(inputString);
 
-    // Set vavariables based on array index referring to columns:
-    // Data Out column A5 = 0, B5 = 1, C5 = 2, etc.
-    incomingExcelFloat = incomingSerialData[0].toFloat(); // Data Out column A5
-    incomingExcelInteger = incomingSerialData[1].toInt(); // Data Out column B5
-    incomingExcelString = incomingSerialData[2]; // Data Out column C5
+//     // Set vavariables based on array index referring to columns:
+//     // Data Out column A5 = 0, B5 = 1, C5 = 2, etc.
+//     incomingExcelFloat = incomingSerialData[0].toFloat(); // Data Out column A5
+//     incomingExcelInteger = incomingSerialData[1].toInt(); // Data Out column B5
+//     incomingExcelString = incomingSerialData[2]; // Data Out column C5
 
-    //inputString = ""; // reset inputString
-    stringComplete = false; // reset stringComplete flag
-  }
-}
+//     //inputString = ""; // reset inputString
+//     stringComplete = false; // reset stringComplete flag
+//   }
+// }
 
 // OUTGOING SERIAL DATA PROCESSING CODE----------------------------------------
 void sendDataToSerial()
@@ -125,7 +123,7 @@ void sendDataToSerial()
   Serial.print(incomingExcelInteger);
   Serial.print(kDelimiter);
   
-  Serial.print(incomingExcelString);
+  //Serial.print(incomingExcelString);
   Serial.print(kDelimiter);
   
   Serial.println(); // Add final line ending character only once
@@ -150,16 +148,15 @@ void processOutgoingSerial()
 void processIncomingSerial()
 {
   if(Serial.available()){
-  GetSerialData();
-  //parseData();
+    parseData(GetSerialData());
   }
-  //ParseSerialData();
 }
 
 // Gathers bits from serial port to build inputString
-void GetSerialData()
+char* GetSerialData()
 {
-  char inputString[64] = {0};
+  static char inputString[64];
+  memset(inputString, 0, sizeof(inputString));
   while (Serial.available()){
     
     Serial.readBytesUntil('\n', inputString, 64);
@@ -169,7 +166,7 @@ void GetSerialData()
     Serial.println(inputString);
     stringComplete =true;
   }
-  parseData(inputString);
+  return inputString;
 }
 
 void parseData(char data[])
@@ -194,61 +191,4 @@ void parseData(char data[])
     }
     // delete token;
     // delete arr;
-}
-
-// Takes the comma delimited string from Data Streamer
-// and splits the fields into an indexed array
-void BuildDataArray(String data)
-{
-  return ParseLine(data);
-}
-
-// Parses a single string of comma delimited values with line ending character
-void ParseLine(String data) 
-{
-    int charIndex = 0; // Tracks the character we are looking at
-    int arrayIndex = 0; // Tracks the array index to set values into
-    while(arrayIndex < kNumberOfChannelsFromExcel) // Loop until full
-    {
-        String field = ParseNextField(data, charIndex);  // Parse next field
-        incomingSerialData[arrayIndex] = field; // Add field to array
-        arrayIndex++;   // Increment index
-    }
-}
-
-// Parses the next value field in between the comma delimiters
-String ParseNextField(String data, int &charIndex)
-{
-    if (charIndex >= data.length() )
-    {
-      return ""; //end of data
-    }
-    
-    String field = "";
-    bool hitDelimiter = false; // flag for delimiter detection 
-    while (hitDelimiter == false) // loop characters until next delimiter
-    {
-        if (charIndex >= data.length() )
-        {
-          break; //end of data
-        }
-
-        if (String(data[charIndex]) == "\n") // if character is a line break
-        {
-          break; // end of data
-        }
-        
-       if(String(data[charIndex]) == kDelimiter) // if we hit a delimiter
-        {
-          hitDelimiter = true;  // flag the delimiter hit
-          charIndex++; // set iterator after delimiter so we skip next comma
-          break;
-        }
-        else
-        {        
-          field += data[charIndex]; // add character to field string
-          charIndex++; // increment to next character in data
-        }
-    }
-    return field;
 }
