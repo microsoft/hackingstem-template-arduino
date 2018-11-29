@@ -40,20 +40,17 @@ int sensorPin = A0;
 // Excel variables ------------------------------------------------------------
 float incomingExcelFloat = 0;
 int incomingExcelInteger = 0;
-//String incomingExcelString = "";
 
 // Serial data variables ------------------------------------------------------
 const byte kNumberOfChannelsFromExcel = 6; //Incoming Serial Data Array
 // IMPORTANT: This must be equal to number of channels set in Data Streamer
-//String incomingSerialData[kNumberOfChannelsFromExcel];
 
-const String kDelimiter = ",";    // Data Streamer expects a comma delimeter
-// char inputString[64];          // String variable to hold incoming data
-boolean stringComplete = false;   // Indicates complete string (newline found)
+const char kDelimiter = ",";    // Data Streamer expects a comma delimeter
 const int kSerialInterval = 50;   // Interval between serial writes
 unsigned long serialPreviousTime; // Timestamp to track serial interval
 
 char* arr[kNumberOfChannelsFromExcel];
+
 // SETUP ----------------------------------------------------------------------
 void setup() {
   // Initializations occur here
@@ -65,7 +62,6 @@ void loop()
 {
   // Process sensors
   processSensors();
-  //delay(1000);
 
   // Read Excel variables from serial port (Data Streamer)
   processIncomingSerial();
@@ -87,25 +83,6 @@ void processSensors()
 }
 
 // Add any specialized methods and processing code here
-
-// // INCOMING SERIAL DATA PROCESSING CODE----------------------------------------
-// // Process serial data inputString from Data Streamer
-// void ParseSerialData()
-// {
-//   if (stringComplete) {     
-//     //Build an array of values from comma delimited string from Data Streamer
-//     //BuildDataArray(inputString);
-
-//     // Set vavariables based on array index referring to columns:
-//     // Data Out column A5 = 0, B5 = 1, C5 = 2, etc.
-//     incomingExcelFloat = incomingSerialData[0].toFloat(); // Data Out column A5
-//     incomingExcelInteger = incomingSerialData[1].toInt(); // Data Out column B5
-//     incomingExcelString = incomingSerialData[2]; // Data Out column C5
-
-//     //inputString = ""; // reset inputString
-//     stringComplete = false; // reset stringComplete flag
-//   }
-// }
 
 // OUTGOING SERIAL DATA PROCESSING CODE----------------------------------------
 void sendDataToSerial()
@@ -152,19 +129,13 @@ void processIncomingSerial()
   }
 }
 
-// Gathers bits from serial port to build inputString
+// Gathers bytes from serial port to build inputString
 char* GetSerialData()
 {
   static char inputString[64];
   memset(inputString, 0, sizeof(inputString));
   while (Serial.available()){
-    
     Serial.readBytesUntil('\n', inputString, 64);
-    
-    //inputString = Serial.readStringUntil('\n');
-    Serial.println("Serial Read Good");
-    Serial.println(inputString);
-    stringComplete =true;
   }
   return inputString;
 }
@@ -172,23 +143,10 @@ char* GetSerialData()
 void parseData(char data[])
 {
     char *token = strtok(data, ",");
-    Serial.println(token);
-    int j = 0;
+    int index = 0;
     while (token != NULL){
-        Serial.println(strlen(token));
-        arr[j] = token;
-      // for(int i = 0; i < strlen(token); i++){
-      //   arr[j][i] = *token;
-      //   //Serial.println(arr[j][i]);
-      //   token++;
-      // }
-     // Serial.print(token);
-     // Serial.print(" ");
+      arr[index] = token;
       token = strtok(NULL, ",");
-      Serial.print("Token in Array is ");
-      Serial.println(arr[j]);
-      j++;
+      index++;
     }
-    // delete token;
-    // delete arr;
 }
