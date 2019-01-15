@@ -136,6 +136,7 @@ char* GetSerialData()
   while (Serial.available()){
     Serial.readBytesUntil('\n', inputString, 64); //Read every byte in Serial buffer until line end or 64 bytes
   }
+  #TODO reject string if comma count isn't >= to kNumberOfChannelsFromExcel -1 
   return inputString;
 }
 
