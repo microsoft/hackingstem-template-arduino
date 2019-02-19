@@ -45,7 +45,7 @@ int incomingExcelInteger = 0;
 const byte kNumberOfChannelsFromExcel = 6; //Incoming Serial Data Array
 // IMPORTANT: This must be equal to number of channels set in Data Streamer
 
-const char kDelimiter = ",";    // Data Streamer expects a comma delimeter
+const char kDelimiter = ',';    // Data Streamer expects a comma delimeter
 const int kSerialInterval = 50;   // Interval between serial writes
 unsigned long serialPreviousTime; // Timestamp to track serial interval
 
