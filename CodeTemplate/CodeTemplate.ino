@@ -37,7 +37,7 @@ char* arr[kNumberOfChannelsFromExcel];
 // SETUP ----------------------------------------------------------------------
 void setup() {
   // Initializations occur here
-  Serial.begin(9600);  
+  Serial.begin(9600);
 }
 
 // START OF MAIN LOOP --------------------------------------------------------- 
@@ -50,7 +50,7 @@ void loop()
   processIncomingSerial();
 
   // Process and send data to Excel via serial port (Data Streamer)
-  // processOutgoingSerial();
+  processOutgoingSerial();
 
   if ( strcmp ("Apple", arr[0]) == 0){ // Compares STR1 to STR2 returns 0 if true.
       Serial.println("working");
