@@ -11,10 +11,10 @@ TODO: Short project description
 5. Go forth and science all the things!
 
 
-//# Contribute
-//We welcome pull requests for enhancements and bug fixes! You may also submit
-//feature requests and bugs you find:
-//https://github.com
+# Contribute
+We welcome pull requests for enhancements and bug fixes! You may also submit
+feature requests and bugs you find:
+https://github.com
 
 #Make it your own!
 This project is licensed under the MIT open source license (see LICENSE.txt).
